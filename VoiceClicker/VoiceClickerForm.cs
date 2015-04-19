@@ -28,8 +28,22 @@ namespace VoiceClicker
 
 			rec.Enabled = true;
 
+			// doesn't work fine (Michael Krisper)
+			//var ch = new Choices(new[] {"Klick", "Doppelklick"});
+			//var gb = new GrammarBuilder(ch);
+			//var g = new Grammar(gb);
+			//rec.LoadGrammar(g);
+
+
 			//rec.SpeechDetected += DoMouseClick;
 			rec.SpeechDetected += PressKeyboardButton;
+
+			rec.SpeechRecognized += rec_SpeechRecognized;
+		}
+
+		private void rec_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+		{
+			Console.WriteLine("Detected: {0}", e.Result);
 		}
 
 		private void PressKeyboardButton(object sender, SpeechDetectedEventArgs e)
