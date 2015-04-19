@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Speech.Recognition;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication1
+namespace VoiceClicker
 {
 	public partial class VoiceClickerForm : Form
 	{
