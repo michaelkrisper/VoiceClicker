@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Speech.Recognition;
 using System.Windows.Forms;
@@ -7,12 +8,11 @@ namespace VoiceClicker
 {
 	public partial class VoiceClickerForm : Form
 	{
-		[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
+		[DllImport("user32.dll")]
 		public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
 
 		private const int MOUSEEVENTF_LEFTDOWN = 0x2;
 		private const int MOUSEEVENTF_LEFTUP = 0x4;
-
 
 		[DllImport("user32.dll")]
 		private static extern uint keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
@@ -28,8 +28,19 @@ namespace VoiceClicker
 
 			rec.Enabled = true;
 
+			//var ch = new Choices(new[] {"Klick", "Doppelklick"});
+			//var gb = new GrammarBuilder(ch);
+			//var g = new Grammar(gb);
+			//rec.LoadGrammar(g);
+
 			//rec.SpeechDetected += DoMouseClick;
 			rec.SpeechDetected += PressKeyboardButton;
+			rec.SpeechRecognized += OnSpeechRecognized;
+		}
+
+		private void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+		{
+			Console.WriteLine("Detected: {0}", e.Result.Text);
 		}
 
 		private void PressKeyboardButton(object sender, SpeechDetectedEventArgs e)
@@ -51,6 +62,26 @@ namespace VoiceClicker
 			mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, x, y, 0L, 0L);
 			Console.WriteLine("[{0}] Clicked on: x={1}, y={2}", e.AudioPosition, x, y);
 			lblInputTime.Text = e.AudioPosition.ToString();
+		}
+
+		private void btControl_Click(object sender, EventArgs e)
+		{
+			if (rec.Enabled)
+			{
+				rec.Enabled = false;
+				rec.SpeechDetected -= PressKeyboardButton;
+				rec.SpeechRecognized -= OnSpeechRecognized;
+				btControl.BackColor = Color.LightGreen;
+				btControl.Text = "Start";
+			}
+			else
+			{
+				rec.Enabled = true;
+				rec.SpeechDetected += PressKeyboardButton;
+				rec.SpeechRecognized += OnSpeechRecognized;
+				btControl.BackColor = Color.LightPink;
+				btControl.Text = "Stop";
+			}
 		}
 	}
 }

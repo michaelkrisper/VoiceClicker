@@ -30,6 +30,7 @@
 		{
 			this.label1 = new System.Windows.Forms.Label();
 			this.lblInputTime = new System.Windows.Forms.Label();
+			this.btControl = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -49,11 +50,23 @@
 			this.lblInputTime.Size = new System.Drawing.Size(0, 20);
 			this.lblInputTime.TabIndex = 1;
 			// 
+			// btControl
+			// 
+			this.btControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+			this.btControl.Location = new System.Drawing.Point(16, 45);
+			this.btControl.Name = "btControl";
+			this.btControl.Size = new System.Drawing.Size(299, 100);
+			this.btControl.TabIndex = 2;
+			this.btControl.Text = "Stop";
+			this.btControl.UseVisualStyleBackColor = false;
+			this.btControl.Click += new System.EventHandler(this.btControl_Click);
+			// 
 			// VoiceClickerForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(417, 43);
+			this.ClientSize = new System.Drawing.Size(331, 157);
+			this.Controls.Add(this.btControl);
 			this.Controls.Add(this.lblInputTime);
 			this.Controls.Add(this.label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -72,6 +85,7 @@
 
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label lblInputTime;
+		private System.Windows.Forms.Button btControl;
 
 	}
 }
