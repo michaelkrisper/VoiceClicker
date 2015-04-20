@@ -35,7 +35,7 @@ namespace VoiceClicker
 
 			//rec.SpeechDetected += DoMouseClick;
 			rec.SpeechDetected += PressKeyboardButton;
-			rec.SpeechRecognized += OnSpeechRecognized;
+			//rec.SpeechRecognized += OnSpeechRecognized;
 		}
 
 		private void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -45,8 +45,8 @@ namespace VoiceClicker
 
 		private void PressKeyboardButton(object sender, SpeechDetectedEventArgs e)
 		{
-			//var key = (byte) Keys.RControlKey;
-			var key = (byte) 'A';
+			var key = (byte) Keys.RControlKey;
+			//var key = (byte) 'A';
 
 			keybd_event(key, 0, KEYEVENTF_KEYDOWN, 0);
 			keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
