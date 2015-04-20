@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Speech.Recognition;
 using System.Windows.Forms;
+using EyeXFramework.Forms;
 
 namespace VoiceClicker
 {
@@ -22,6 +23,9 @@ namespace VoiceClicker
 
 		private static SpeechRecognizer rec = new SpeechRecognizer();
 
+
+		private static FormsEyeXHost host = new FormsEyeXHost();
+
 		public VoiceClickerForm()
 		{
 			InitializeComponent();
@@ -36,6 +40,10 @@ namespace VoiceClicker
 			//rec.SpeechDetected += DoMouseClick;
 			rec.SpeechDetected += PressKeyboardButton;
 			//rec.SpeechRecognized += OnSpeechRecognized;
+
+			host.Start();
+
+			Console.WriteLine("Finished Constructor");
 		}
 
 		private void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -48,8 +56,10 @@ namespace VoiceClicker
 			var key = (byte) Keys.RControlKey;
 			//var key = (byte) 'A';
 
-			keybd_event(key, 0, KEYEVENTF_KEYDOWN, 0);
-			keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
+			//keybd_event(key, 0, KEYEVENTF_KEYDOWN, 0);
+			//keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
+
+			host.TriggerActivation();
 
 			Console.WriteLine("[{0}] Pressed Key: {1}.", e.AudioPosition, key);
 			lblInputTime.Text = e.AudioPosition.ToString();
@@ -82,6 +92,11 @@ namespace VoiceClicker
 				btControl.BackColor = Color.LightPink;
 				btControl.Text = "Stop";
 			}
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			host.TriggerActivation();
 		}
 	}
 }
