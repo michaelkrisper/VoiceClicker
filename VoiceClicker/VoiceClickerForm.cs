@@ -1,102 +1,32 @@
 ﻿using System;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Speech.Recognition;
-using System.Windows.Forms;
 using EyeXFramework.Forms;
+using System.Windows.Forms;
+using System.Speech.Recognition;
 
 namespace VoiceClicker
 {
 	public partial class VoiceClickerForm : Form
 	{
-		[DllImport("user32.dll")]
-		public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
-
-		private const int MOUSEEVENTF_LEFTDOWN = 0x2;
-		private const int MOUSEEVENTF_LEFTUP = 0x4;
-
-		[DllImport("user32.dll")]
-		private static extern uint keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
-
-		private const int KEYEVENTF_KEYDOWN = 0x0;
-		private const int KEYEVENTF_KEYUP = 0x2;
-
-		private static SpeechRecognizer rec = new SpeechRecognizer();
-
-
-		private static FormsEyeXHost host = new FormsEyeXHost();
+		private static readonly SpeechRecognitionEngine Rec = new SpeechRecognitionEngine();
+		private static readonly FormsEyeXHost Host = new FormsEyeXHost();
 
 		public VoiceClickerForm()
 		{
 			InitializeComponent();
 
-			rec.Enabled = true;
+			Host.Start();
 
-			//var ch = new Choices(new[] {"Klick", "Doppelklick"});
-			//var gb = new GrammarBuilder(ch);
-			//var g = new Grammar(gb);
-			//rec.LoadGrammar(g);
-
-			//rec.SpeechDetected += DoMouseClick;
-			rec.SpeechDetected += PressKeyboardButton;
-			//rec.SpeechRecognized += OnSpeechRecognized;
-
-			host.Start();
-
-			Console.WriteLine("Finished Constructor");
+			Rec.UnloadAllGrammars();
+			Rec.LoadGrammar(new Grammar(new Choices("click", "okay")));
+			Rec.SpeechRecognized += TriggerActivation;
+			Rec.SetInputToDefaultAudioDevice();
+			Rec.RecognizeAsync(RecognizeMode.Multiple);
 		}
 
-		private void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+		private static void TriggerActivation(object sender, SpeechRecognizedEventArgs e)
 		{
-			Console.WriteLine("Detected: {0}", e.Result.Text);
-		}
-
-		private void PressKeyboardButton(object sender, SpeechDetectedEventArgs e)
-		{
-			var key = (byte) Keys.RControlKey;
-			//var key = (byte) 'A';
-
-			//keybd_event(key, 0, KEYEVENTF_KEYDOWN, 0);
-			//keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
-
-			host.TriggerActivation();
-
-			Console.WriteLine("[{0}] Pressed Key: {1}.", e.AudioPosition, key);
-			lblInputTime.Text = e.AudioPosition.ToString();
-		}
-
-		private void DoMouseClick(object sender, SpeechDetectedEventArgs e)
-		{
-			var x = Cursor.Position.X;
-			var y = Cursor.Position.Y;
-			mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, x, y, 0L, 0L);
-			Console.WriteLine("[{0}] Clicked on: x={1}, y={2}", e.AudioPosition, x, y);
-			lblInputTime.Text = e.AudioPosition.ToString();
-		}
-
-		private void btControl_Click(object sender, EventArgs e)
-		{
-			if (rec.Enabled)
-			{
-				rec.Enabled = false;
-				rec.SpeechDetected -= PressKeyboardButton;
-				rec.SpeechRecognized -= OnSpeechRecognized;
-				btControl.BackColor = Color.LightGreen;
-				btControl.Text = "Start";
-			}
-			else
-			{
-				rec.Enabled = true;
-				rec.SpeechDetected += PressKeyboardButton;
-				rec.SpeechRecognized += OnSpeechRecognized;
-				btControl.BackColor = Color.LightPink;
-				btControl.Text = "Stop";
-			}
-		}
-
-		private void button1_Click(object sender, EventArgs e)
-		{
-			host.TriggerActivation();
+			Host.TriggerActivation();
+			Console.WriteLine("Speech recognized: " + e.Result.Text);
 		}
 	}
 }
